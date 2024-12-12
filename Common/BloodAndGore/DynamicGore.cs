@@ -4,7 +4,9 @@ using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
+using TerrariaOverhaul.Utilities;
 using BitOperations = System.Numerics.BitOperations;
+using BitMask = TerrariaOverhaul.Utilities.BitMask<ulong>;
 
 namespace TerrariaOverhaul.Common.BloodAndGore;
 
@@ -16,7 +18,7 @@ public sealed class DynamicGore : ModGore
 		public ushort Id;
 		public ushort Version;
 
-		public bool IsValid => Version != 0 && textures[Id].Version == Version;
+		public readonly bool IsValid => Version != 0 && textures[Id].Version == Version;
 	}
 
 	private struct TextureData
@@ -31,9 +33,9 @@ public sealed class DynamicGore : ModGore
 
 	public new static int Type => ModContent.GoreType<DynamicGore>();
 
-	private static TextureHandle[] goreTextureMapping = Array.Empty<TextureHandle>();
-	private static TextureData[] textures = Array.Empty<TextureData>();
-	private static ulong[] texturesPresenceMask = Array.Empty<ulong>();
+	private static TextureHandle[] goreTextureMapping = [];
+	private static TextureData[] textures = [];
+	private static BitMask[] texturesPresenceMask = [];
 	private static uint renderTargetCount;
 
 	public override string Texture { get; } = $"{nameof(TerrariaOverhaul)}/Assets/Textures/Transparent";
@@ -53,15 +55,8 @@ public sealed class DynamicGore : ModGore
 		}
 
 		for (int i = 0, baseIndex = 0; i < texturesPresenceMask.Length; i++, baseIndex += BitsPerMask) {
-			ulong mask = texturesPresenceMask[i];
-
-			while (mask != 0) {
-				int bitShift = BitOperations.TrailingZeroCount(mask);
-				int index = baseIndex + bitShift;
-
-				RemoveTexture(index);
-
-				mask &= ~(1ul << bitShift);
+			foreach (int index in texturesPresenceMask[i]) {
+				RemoveTexture(baseIndex + index);
 			}
 		}
 	}
@@ -90,9 +85,8 @@ public sealed class DynamicGore : ModGore
 		renderTargetCount++;
 
 		// Update the presence bit
-		(int bitIndex, int bitShift) = Math.DivRem((int)index, BitsPerMask);
-
-		texturesPresenceMask[bitIndex] |= 1ul << bitShift;
+		(int maskIndex, int bitIndex) = Math.DivRem((int)index, BitsPerMask);
+		texturesPresenceMask[maskIndex].Set(bitIndex);
 
 		// Initialize data
 		data.Reference = texture;
@@ -124,9 +118,8 @@ public sealed class DynamicGore : ModGore
 	private static void RemoveTexture(int textureId)
 	{
 		// Update the presence bit
-		(int bitIndex, int bitShift) = Math.DivRem(textureId, BitsPerMask);
-
-		texturesPresenceMask[bitIndex] &= ~(1ul << bitShift);
+		(int maskIndex, int bitIndex) = Math.DivRem(textureId, BitsPerMask);
+		texturesPresenceMask[maskIndex].Unset(bitIndex);
 
 		// Dispose & nullify
 		ref var data = ref textures[textureId];
@@ -149,9 +142,8 @@ public sealed class DynamicGore : ModGore
 
 		// Claim
 		if (renderTargetCount < textures.Length) {
-			for (int i = 0, baseIndex = 0; i < texturesPresenceMask.Length; i++, baseIndex += BitsPerMask) {
-				int freeIndex = BitOperations.TrailingZeroCount(~texturesPresenceMask[i]);
-
+			for (int i = 0, baseIndex = 0; i < texturesPresenceMask.Length; i++, baseIndex += BitMask.BitSize) {
+				int freeIndex = texturesPresenceMask[i].TrailingOneCount();
 				if (freeIndex != BitsPerMask) {
 					result = (ushort)(baseIndex + freeIndex);
 
@@ -178,13 +170,13 @@ public sealed class DynamicGore : ModGore
 	{
 		orig(main);
 
-		Span<ulong> referencedTexturesMask = stackalloc ulong[texturesPresenceMask.Length];
+		Span<BitMask> referencedTexturesMask = stackalloc BitMask[texturesPresenceMask.Length];
 
 		DrawDynamicGore(referencedTexturesMask);
 		DisposeUnreferencedTextures(referencedTexturesMask);
 	}
 
-	private static void DrawDynamicGore(Span<ulong> referencedTexturesMask)
+	private static void DrawDynamicGore(Span<BitMask> referencedTexturesMask)
 	{
 		int type = Type;
 		var sb = Main.spriteBatch;
@@ -204,9 +196,8 @@ public sealed class DynamicGore : ModGore
 			}
 
 			// Mark the texture as referenced.
-			(int bitIndex, int bitShift) = Math.DivRem((int)textureHandle.Id, BitsPerMask);
-
-			referencedTexturesMask[bitIndex] |= 1ul << bitShift;
+			(int maskIndex, int bitIndex) = Math.DivRem((int)textureHandle.Id, BitsPerMask);
+			referencedTexturesMask[maskIndex].Set(bitIndex);
 
 			// Draw
 			Texture2D texture = textures[textureHandle.Id].Reference;
@@ -230,20 +221,15 @@ public sealed class DynamicGore : ModGore
 		}
 	}
 
-	private static void DisposeUnreferencedTextures(ReadOnlySpan<ulong> referencedTexturesMask)
+	private static void DisposeUnreferencedTextures(ReadOnlySpan<BitMask> referencedTexturesMask)
 	{
 		for (int i = 0, baseIndex = 0; i < referencedTexturesMask.Length; i++, baseIndex += BitsPerMask) {
-			ulong mask = ~referencedTexturesMask[i] & texturesPresenceMask[i];
-
-			while (mask != 0) {
-				int bitShift = BitOperations.TrailingZeroCount(mask);
-				int index = baseIndex + bitShift;
-
+			BitMask unreferencedBits = (~referencedTexturesMask[i]) & texturesPresenceMask[i];
+			foreach (int bitIndex in unreferencedBits) {
+				int index = baseIndex + bitIndex;
 				if (textures[index].AutoRemove) {
 					RemoveTexture(index);
 				}
-
-				mask &= ~(1ul << bitShift);
 			}
 		}
 	}
