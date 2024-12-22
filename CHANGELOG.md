@@ -89,6 +89,7 @@
 - A few more GUI elements were made localizable.
 ### Fixes
 - Fixed issue [#217](https://github.com/Mirsario/TerrariaOverhaul/issues/217) (Decals may become offset or warped in rendering).
+- Fixed issue [#195](https://github.com/Mirsario/TerrariaOverhaul/issues/195) (Cutting down a tree makes things disappear for a moment).
 - Fixed ambience tracks being broken again. If only unit tests were a thing...
 - Fixed the "Evil Drone" ambience track unintentionally playing in the Jungle due to a mishap in the internal 'environment signal' system.
 - Fixed the Vortex Beater playing its firing sound effects every frame, via a temporary workaround.

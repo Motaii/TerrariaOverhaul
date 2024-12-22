@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Runtime.CompilerServices;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,6 +15,7 @@ namespace TerrariaOverhaul.Core.Tiles;
 public sealed class TileSnapshotSystem : ModSystem
 {
 	private static SpriteBatch? spriteBatch;
+	private static TileDrawing? tileRenderer;
 
 	public override void Load()
 	{
@@ -24,6 +26,11 @@ public sealed class TileSnapshotSystem : ModSystem
 	{
 		spriteBatch?.Dispose();
 		spriteBatch = null;
+	}
+
+	private static void EnsureInitialized()
+	{
+		tileRenderer ??= new TileDrawing(Main.instance.TilePaintSystem);
 	}
 
 	public static RenderTarget2D CreateSpecificTilesSnapshot(Vector2Int sizeInTiles, Vector2Int baseTilePosition, ReadOnlySpan<Vector2Int> tilePositions)
@@ -50,23 +57,25 @@ public sealed class TileSnapshotSystem : ModSystem
 
 	public static void RenderSpecificTiles(Vector2Int baseTilePosition, ReadOnlySpan<Vector2Int> tilePositions)
 	{
-		Main.instance.ClearCachedTileDraws();
+		EnsureInitialized();
+		Debug.Assert(tileRenderer != null);
 
-		var tileRenderer = Main.instance.TilesRenderer;
 		var tileDrawData = new TileDrawInfo();
 		var screenOffset = Vector2.Zero;
-		var originalZoomFactor = Main.GameViewMatrix.Zoom;
-		var originalScreenPosition = Main.screenPosition;
-		bool originalGameMenu = Main.gameMenu;
 
+		// Override renderer
+		using var _1 = ValueOverride.Create(ref Main.instance.TilesRenderer, tileRenderer);
 		// Adjust draw position
-		Main.screenPosition = baseTilePosition * TileUtils.TileSizeInPixels;
-		// Get rid of scaling
-		Main.GameViewMatrix.Zoom = Vector2.One;
+		using var _2 = ValueOverride.Create(ref Main.screenPosition, baseTilePosition * TileUtils.TileSizeInPixels);
 		// This hack forces Lighting.GetColor to yield with Color.White
-		Main.gameMenu = true;
+		using var _3 = ValueOverride.Create(ref Main.gameMenu, true);
+		// Get rid of scaling
+		var originalZoomFactor = Main.GameViewMatrix.Zoom;
+		Main.GameViewMatrix.Zoom = Vector2.One;
 
 		ClearLegacyCachedDraws(tileRenderer);
+		tileRenderer.ClearCachedTileDraws(solidLayer: false);
+		tileRenderer.ClearCachedTileDraws(solidLayer: true);
 
 		tileRenderer.PreDrawTiles(solidLayer: false, forRenderTargets: true, intoRenderTargets: true);
 		Main.spriteBatch.Begin();
@@ -83,9 +92,7 @@ public sealed class TileSnapshotSystem : ModSystem
 		Main.spriteBatch.End();
 		tileRenderer.PostDrawTiles(solidLayer: false, forRenderTargets: false, intoRenderTargets: false);
 
-		Main.gameMenu = originalGameMenu;
 		Main.GameViewMatrix.Zoom = originalZoomFactor;
-		Main.screenPosition = originalScreenPosition;
 	}
 
 	[UnsafeAccessor(UnsafeAccessorKind.Method)]
