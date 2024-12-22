@@ -76,7 +76,7 @@ public sealed class EyeOfCthulhuRework : GlobalNPC
 			CameraCurios.Create(npc.Center, new() {
 				Weight = 2.00f,
 				Zoom = +0.5f,
-				Range = new(Start: 512f, End: 1536f, Exponent: 2f),
+				Range = new(Min: 512f, Max: 1536f, Exponent: 2f),
 				LengthInSeconds = 0.10f,
 				FadeInLength = 0.25f,
 				FadeOutLength = 1.5f,

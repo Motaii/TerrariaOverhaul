@@ -31,12 +31,12 @@ public sealed class CommonCameraCurios : ModSystem
 		var bossCurio = baseCurio with {
 			UniqueId =  player.dead ? "BossesWhileDead" : "Bosses",
 			Weight = player.dead ? 1.00f : 0.15f,
-			Range = new(Start: 512f, End: 1536f, Exponent: 2f),
+			Range = new(Min: 512f, Max: 1536f, Exponent: 2f),
 		};
 		var rareCurio = baseCurio with {
 			UniqueId = "RareNPCs",
 			Weight = 0.15f,
-			Range = lifeAnalyzer ? new(Start: 512f, End: 2048f, Exponent: 2.0f) : new(Start: 64f, End: 768f, Exponent: 2.0f),
+			Range = lifeAnalyzer ? new(Min: 512f, Max: 2048f, Exponent: 2.0f) : new(Min: 64f, Max: 768f, Exponent: 2.0f),
 			Zoom = +0.125f,
 		};
 
@@ -71,7 +71,7 @@ public sealed class CommonCameraCurios : ModSystem
 
 		CameraCurio curio;
 		curio.Zoom = +0.125f;
-		curio.Range = new(Start: 100f, End: 450f, Exponent: 1.50f);
+		curio.Range = new(Min: 100f, Max: 450f, Exponent: 1.50f);
 		curio.Weight = 0.325f;
 		curio.LengthInSeconds = 0.25f;
 		curio.FadeInLength = 1.0f;

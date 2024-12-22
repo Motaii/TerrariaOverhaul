@@ -15,7 +15,7 @@ public struct CameraCurio()
 {
 	public required float Weight;
 	public required float LengthInSeconds;
-	public DistanceRange? Range = null;
+	public ExponentialRange? Range = null;
 	public float FadeInLength = 0.5f;
 	public float FadeOutLength = 0.5f;
 	public float? Zoom = null;

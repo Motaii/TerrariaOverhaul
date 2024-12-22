@@ -78,7 +78,7 @@ public sealed class BossDeathEffects : GlobalNPC
 		if (FocusCameraOnBossEvents) {
 			CameraCurios.Create(position, new() {
 				Weight = 3.00f,
-				Range = new(Start: 512f, End: 1536f, Exponent: 2f),
+				Range = new(Min: 512f, Max: 1536f, Exponent: 2f),
 				LengthInSeconds = 1.00f,
 				FadeInLength = 0.35f,
 				FadeOutLength = 3.0f,
