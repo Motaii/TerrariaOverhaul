@@ -14,11 +14,21 @@ namespace TerrariaOverhaul.Common.EntityEffects;
 public sealed class PlayerHoldOutAnimation : ModPlayer
 {
 	public static readonly ConfigEntry<bool> AlwaysShowAimableWeapons = new(ConfigSide.ClientOnly, true, "Visuals");
-	
+	public static bool[] IsItemExcluded = null!;
+
 	private float directItemRotation;
 	private float directTargetItemRotation;
 
 	public float VisualRecoil { get; set; }
+
+	public override void SetStaticDefaults()
+	{
+		// Just items with hardcode found in ItemCheck_ApplyUseStyle_Inner.
+		IsItemExcluded = ItemID.Sets.Factory.CreateBoolSet([
+			ItemID.SpiritFlame,
+			ItemID.MysticCoilSnake,
+		]);
+	}
 
 	public override void Load()
 	{
@@ -35,6 +45,9 @@ public sealed class PlayerHoldOutAnimation : ModPlayer
 		On_Player.ItemCheck_ApplyUseStyle_Inner += static (orig, player, mountOffset, sItem, heldItemFrame) => {
 			orig(player, mountOffset, sItem, heldItemFrame);
 
+			if (IsItemExcluded[sItem.type])
+				return;
+			
 			if (sItem.useStyle == ItemUseStyleID.Shoot) {
 				var modPlayer = player.GetModPlayer<PlayerHoldOutAnimation>();
 
