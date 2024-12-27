@@ -24,12 +24,15 @@ public sealed class NpcAudioEffects : GlobalNPC
 		public (int Min, int Max) RandomSoundCooldown;
 		// Movement Sound
 		public SoundStyle MovementSound;
+		public SoundStyle AmbientMovementSound;
 		public (float MinSpeed, float MaxSpeed, float MinPitch, float MaxPitch) MovementSoundVelocityPitching = (2.5f, 10f, -0.50f, 0.50f);
+		public (float MinSpeed, float MaxSpeed, float MinPitch, float MaxPitch) AmbientMovementSoundVelocityPitching = (2.5f, 10f, -0.50f, 0.50f);
 
 		internal ulong randomSoundCooldownEndTime;
 		internal ulong approachSoundCooldownEndTime;
 		internal float lastNonUndergroundDistanceToClosestTarget;
 		internal SlotId movementSoundId;
+		internal SlotId ambientMovementSoundId;
 	}
 
 	public EffectData? Data;
@@ -89,6 +92,11 @@ public sealed class NpcAudioEffects : GlobalNPC
 		if (data.MovementSound.SoundPath != null && !SoundEngine.TryGetActiveSound(data.movementSoundId, out _)) {
 			object boxedIndex = npc.whoAmI;
 			data.movementSoundId = SoundEngine.PlaySound(in data.MovementSound, center, s => MovementSoundCallback(s, boxedIndex));
+		}
+
+		if (data.AmbientMovementSound.SoundPath != null && !SoundEngine.TryGetActiveSound(data.ambientMovementSoundId, out _)) {
+			object boxedIndex = npc.whoAmI;
+			data.ambientMovementSoundId = SoundEngine.PlaySound(in data.AmbientMovementSound, center, s => MovementSoundCallback(s, boxedIndex));
 		}
 	}
 
