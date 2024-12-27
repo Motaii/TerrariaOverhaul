@@ -32,6 +32,9 @@ public sealed class OverhaulTileTags : ILoadable
 	/// <summary> Affects footstep sounds. </summary>
 	public static readonly TagData Mud = ContentTags.Get<Group>(nameof(Mud));
 
+	/// <summary> Affects footstep sounds. </summary>
+	public static readonly TagData Cloud = ContentTags.Get<Group>(nameof(Cloud));
+
 	/// <summary> Used for platforms. </summary>
 	public static readonly TagData AllowClimbing = ContentTags.Get<Group>(nameof(AllowClimbing));
 
@@ -116,6 +119,12 @@ public sealed class OverhaulTileTags : ILoadable
 
 		Mud.SetMultiple(new int[] {
 			TileID.Mud,
+		});
+
+		Cloud.SetMultiple(new int[] {
+			TileID.Cloud,
+			TileID.RainCloud,
+			TileID.SnowCloud
 		});
 
 		Sand.PopulateFromSets(TileID.Sets.isDesertBiomeSand);
