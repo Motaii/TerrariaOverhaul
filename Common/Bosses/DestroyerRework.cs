@@ -73,7 +73,7 @@ public sealed class DestroyerRework : GlobalNPC
 				AmbientMovementSoundVelocityPitching = (2.5f, 10f, -0.50f, 0.50f),
 				AmbientMovementSound = new SoundStyle($"{nameof(TerrariaOverhaul)}/Assets/Sounds/Bosses/DestroyerRumbleLoop") {
 					Volume = 5f,
-					Pitch = -4f,
+					Pitch = -1f,
 					IsLooped = true,
 					Identifier = "TheDestroyer_Ambient_Movement",
 				},
