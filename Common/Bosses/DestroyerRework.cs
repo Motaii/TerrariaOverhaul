@@ -64,18 +64,10 @@ public sealed class DestroyerRework : GlobalNPC
 				},
 				// Movement
 				MovementSoundVelocityPitching = (2.5f, 10f, -0.50f, 0.50f),
-				MovementSound = new SoundStyle($"{nameof(TerrariaOverhaul)}/Assets/Sounds/Bosses/DestroyerLoop") {
+				MovementSound = new SoundStyle($"{nameof(TerrariaOverhaul)}/Assets/Sounds/Bosses/DestroyerRumbleLoop") {
 					Volume = 0.525f,
 					IsLooped = true,
 					Identifier = "TheDestroyer_Movement",
-				},
-				// Ambient Rumbling (Additional Movement Noise)
-				AmbientMovementSoundVelocityPitching = (2.5f, 10f, -0.50f, 0.50f),
-				AmbientMovementSound = new SoundStyle($"{nameof(TerrariaOverhaul)}/Assets/Sounds/Bosses/DestroyerRumbleLoop") {
-					Volume = 5f,
-					Pitch = -1f,
-					IsLooped = true,
-					Identifier = "TheDestroyer_Ambient_Movement",
 				},
 				// Random
 				RandomSoundCooldown = (45, 60 * 10),
