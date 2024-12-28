@@ -18,7 +18,16 @@ public sealed class OverhaulTileTags : ILoadable
 	public static readonly TagData Stone = ContentTags.Get<Group>(nameof(Stone));
 
 	/// <summary> Affects footstep sounds. </summary>
+	public static readonly TagData MossStone = ContentTags.Get<Group>(nameof(MossStone));
+
+	/// <summary> Affects footstep sounds. </summary>
+	public static readonly TagData Brick = ContentTags.Get<Group>(nameof(Brick));
+
+	/// <summary> Affects footstep sounds. </summary>
 	public static readonly TagData Grass = ContentTags.Get<Group>(nameof(Grass));
+
+	/// <summary> Affects footstep sounds. </summary>
+	public static readonly TagData Glass = ContentTags.Get<Group>(nameof(Glass));
 
 	/// <summary> Affects footstep sounds. </summary>
 	public static readonly TagData Sand = ContentTags.Get<Group>(nameof(Sand));
@@ -34,6 +43,9 @@ public sealed class OverhaulTileTags : ILoadable
 
 	/// <summary> Affects footstep sounds. </summary>
 	public static readonly TagData Cloud = ContentTags.Get<Group>(nameof(Cloud));
+
+	/// <summary> Affects footstep sounds. </summary>
+	public static readonly TagData Balloon = ContentTags.Get<Group>(nameof(Balloon));
 
 	/// <summary> Used for platforms. </summary>
 	public static readonly TagData AllowClimbing = ContentTags.Get<Group>(nameof(AllowClimbing));
@@ -85,12 +97,27 @@ public sealed class OverhaulTileTags : ILoadable
 			//TileID.PineTree,
 		});
 
+		Glass.SetMultiple(new int[] {
+			TileID.Glass,
+			TileID.AmberGemspark, 
+			TileID.AmberGemsparkOff,
+			TileID.AmethystGemspark, 
+			TileID.AmethystGemsparkOff,
+			TileID.DiamondGemspark, 
+			TileID.DiamondGemsparkOff,
+			TileID.EmeraldGemspark, 
+			TileID.EmeraldGemsparkOff,
+			TileID.RubyGemspark, 
+			TileID.RubyGemsparkOff,
+			TileID.SapphireGemspark, 
+			TileID.SapphireGemsparkOff,
+			TileID.TopazGemspark, 
+			TileID.TopazGemsparkOff,
+		});
+
 		Dirt.SetMultiple(new int[] {
 			TileID.Dirt,
 			TileID.ClayBlock,
-			TileID.Ash,
-			TileID.Silt,
-			TileID.Slush,
 			TileID.Hive,
 			//TileID.Mud,
 		});
@@ -101,6 +128,14 @@ public sealed class OverhaulTileTags : ILoadable
 			TileID.ActiveStoneBlock,
 			TileID.SandStoneSlab,
 			TileID.GrayBrick,
+			TileID.Ebonstone,
+			TileID.Crimstone,
+			TileID.Pearlstone,
+			TileID.MarbleBlock,
+			TileID.GraniteBlock,
+		});
+
+		MossStone.SetMultiple(new int[] {
 			// Moss
 			TileID.ArgonMoss,
 			TileID.BlueMoss,
@@ -111,27 +146,124 @@ public sealed class OverhaulTileTags : ILoadable
 			TileID.RedMoss,
 			TileID.PurpleMoss,
 			TileID.XenonMoss,
-			// Evil
-			TileID.Ebonstone,
-			TileID.Crimstone,
-			TileID.Pearlstone,
+			TileID.LongMoss,
+			TileID.RainbowMoss,
+			TileID.VioletMoss,
+			// Moss Block
+			TileID.ArgonMossBlock,
+			TileID.KryptonMossBlock,
+			TileID.LavaMossBlock,
+			TileID.XenonMossBlock,
+			TileID.RainbowMossBlock,
+			TileID.VioletMossBlock,
+			// Moss Brick
+			TileID.ArgonMossBrick,
+			TileID.BlueMossBrick,
+			TileID.BrownMossBrick,
+			TileID.GreenMossBrick,
+			TileID.KryptonMossBrick,
+			TileID.LavaMossBrick,
+			TileID.RedMossBrick,
+			TileID.PurpleMossBrick,
+			TileID.XenonMossBrick,
+			TileID.RainbowMossBrick,
+			TileID.VioletMossBrick,
+		});
+
+		Brick.SetMultiple(new int[] {
+			TileID.GrayBrick,
+			TileID.RedBrick,
+			TileID.SandstoneBrick,
+			TileID.SnowBrick,
+			TileID.IceBrick,
+			TileID.Mudstone,
+			TileID.IridescentBrick,
+			TileID.CopperBrick,
+			TileID.TinBrick,
+			TileID.IronBrick,
+			TileID.LeadBrick,
+			TileID.SilverBrick,
+			TileID.TungstenBrick,
+			TileID.GoldBrick,
+			TileID.PlatinumBrick,
+			TileID.EbonstoneBrick,
+			TileID.CrimstoneBrick,
+			TileID.DemoniteBrick,
+			TileID.CrimtaneBrick,
+			TileID.MeteoriteBrick,
+			TileID.ObsidianBrick,
+			TileID.HellstoneBrick,
+			TileID.PearlstoneBrick,
+			TileID.CobaltBrick,
+			TileID.MythrilBrick,
+			TileID.ChlorophyteBrick,
+			TileID.LunarBrick,
+			TileID.HeavenforgeBrick,
+			TileID.LunarRustBrick,
+			TileID.AstraBrick,
+			TileID.DarkCelestialBrick,
+			TileID.MercuryBrick,
+			TileID.StarRoyaleBrick,
+			TileID.CryocoreBrick,
+			TileID.CosmicEmberBrick,
+			TileID.RainbowBrick,
+			TileID.ShimmerBrick,
+			TileID.BlueDungeonBrick,
+			TileID.GreenDungeonBrick,
+			TileID.PinkDungeonBrick,
+			TileID.CrackedBlueDungeonBrick,
+			TileID.CrackedGreenDungeonBrick,
+			TileID.CrackedPinkDungeonBrick,
+			TileID.LihzahrdBrick,
+			TileID.SolarBrick,
+			TileID.NebulaBrick,
+			TileID.StardustBrick,
+			TileID.VortexBrick,
+			TileID.AncientCopperBrick,
+			TileID.AncientSilverBrick,
+			TileID.AncientGoldBrick,
+			TileID.AncientObsidianBrick,
+			TileID.AncientHellstoneBrick,
+			TileID.AncientCobaltBrick,
+			TileID.AncientMythrilBrick,
+			TileID.AncientBlueBrick,
+			TileID.AncientGreenBrick,
+			TileID.AncientPinkBrick,
 		});
 
 		Mud.SetMultiple(new int[] {
 			TileID.Mud,
+			TileID.SlimeBlock,
+			TileID.FrozenSlimeBlock,
+			TileID.PinkSlimeBlock,
+			TileID.FleshBlock,
 		});
 
 		Cloud.SetMultiple(new int[] {
 			TileID.Cloud,
 			TileID.RainCloud,
-			TileID.SnowCloud
+			TileID.SnowCloud,
+		});
+
+		Balloon.SetMultiple(new int[] {
+			TileID.SillyBalloonGreen,
+			TileID.SillyBalloonPink,
+			TileID.SillyBalloonPurple,
+			TileID.SillyBalloonTile,
 		});
 
 		Sand.PopulateFromSets(TileID.Sets.isDesertBiomeSand);
 		Sand.SetMultiple(new int[] {
+			TileID.Ash,
+			TileID.Silt,
+			TileID.Slush,
 			TileID.Pearlsand,
 			TileID.Ebonsand,
-			TileID.Crimsand
+			TileID.Crimsand,
+			TileID.HardenedSand,
+			TileID.CorruptHardenedSand,
+			TileID.CrimsonHardenedSand,
+			TileID.HallowHardenedSand,
 		});
 
 		Snow.SetMultiple(new int[] {
