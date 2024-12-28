@@ -10,6 +10,20 @@ using TerrariaOverhaul.Utilities;
 
 namespace TerrariaOverhaul.Common.Ambience;
 
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class EnvironmentSignalUpdaterAttribute(string? tagNameOverride = null) : Attribute
+{
+	public readonly string? TagNameOverride = tagNameOverride;
+}
+
+public readonly ref struct EnvironmentContext
+{
+	public Player Player { get; init; }
+	public Vector2 PlayerTilePosition { get; init; }
+	public ReadOnlySpan<int> TileCounts { get; init; }
+	public SceneMetrics Metrics { get; init; }
+}
+
 /// <summary>
 /// Utility system for setting and getting dynamic tags of the local player's environment.
 /// </summary>

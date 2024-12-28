@@ -44,7 +44,7 @@ public sealed class CalculatedSignalArrayJsonConverter : JsonConverter
 	public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
 	{
 		if (reader.TokenType != JsonToken.StartObject) {
-			throw new InvalidOperationException($"Expected a JSON string or object, but got '{reader.TokenType}' instead.");
+			throw new InvalidOperationException($"Expected a JSON object, but got '{reader.TokenType}' instead.");
 		}
 
 		var jObject = JObject.Load(reader);
