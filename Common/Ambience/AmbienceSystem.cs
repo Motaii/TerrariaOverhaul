@@ -106,23 +106,22 @@ public sealed class AmbienceSystem : ModSystem
 		var jsonSerializer = new JsonSerializer();
 		jsonSerializer.Converters.Add(new AmbienceTrackJsonConverter());
 
-		foreach (string fullFilePath in assets.Where(t => t.EndsWith(".prefab.hjson"))) {
+		const string Extension = ".prefab.hjson";
+
+		foreach (string fullFilePath in assets.Where(t => t.EndsWith(Extension))) {
 			using var stream = mod.GetFileStream(fullFilePath);
 			using var streamReader = new StreamReader(stream);
 
+			string fileName = Path.GetFileName(fullFilePath);
+			string trackName = fileName.Substring(0, fileName.Length - Extension.Length);
 			string hjsonText = streamReader.ReadToEnd();
 			string jsonText = Hjson.HjsonValue.Parse(hjsonText).ToString();
 			var json = JObject.Parse(jsonText)!;
 
-			foreach (var rootPair in json) {
-				if (rootPair is not { Key: string entityName, Value: JObject entityJson }
-				|| entityJson["AmbienceTrack"] is not JObject ambienceTrackJson) {
-					continue;
-				}
-
+			if (json["AmbienceTrack"] is JObject ambienceTrackJson) {
 				using (new Logging.QuietExceptionHandle()) {
 					try {
-						RegisterAmbienceTrack(entityName, ambienceTrackJson.ToObject<AmbienceTrack>(jsonSerializer)!);
+						RegisterAmbienceTrack(trackName, ambienceTrackJson.ToObject<AmbienceTrack>(jsonSerializer)!);
 					}
 					catch (Exception e) {
 						DebugSystem.Log($"Failed to parse '{fullFilePath}':\r\n{e.Message}");

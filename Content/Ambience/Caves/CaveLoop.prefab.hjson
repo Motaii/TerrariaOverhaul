@@ -4,16 +4,10 @@
 
 AmbienceTrack: {
 	Sound: {
-		SoundPath: "TerrariaOverhaul/Assets/Sounds/Ambience/Underground/FallingRocks"
-		NumVariants: 2
+		SoundPath: "TerrariaOverhaul/Assets/Sounds/Ambience/Underground/CaveLoop"
 		Type: Ambient
-		Volume: 0.4
-		PitchVariance: 0.3
-	}
-	InstanceCooldown: {
-		Min: 5.0
-		Max: 80.0
-		Exponent: 1.5
+		Volume: 0.2
+		IsLooped: true
 	}
 		
 	// Plays everywhere underground
