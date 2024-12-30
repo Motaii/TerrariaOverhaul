@@ -1,10 +1,14 @@
-﻿using System;
+﻿// Copyright (c) 2020-2024 Mirsario & Contributors.
+// Released under the GNU General Public License 3.0.
+// See LICENSE.md for details.
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Hjson;
 using Microsoft.Xna.Framework;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using ReLogic.Utilities;
 using Terraria.Audio;
@@ -24,8 +28,10 @@ public sealed class AmbienceSystem : ModSystem
 {
 	public static readonly ConfigEntry<bool> EnableAmbientSounds = new(ConfigSide.ClientOnly, true, "Ambience");
 
-	private static readonly List<AmbienceTrack> Tracks = new();
 	private static readonly Tag VolumeTag = "Volume";
+	private static readonly List<AmbienceTrackType> TrackTypes = new();
+	private static readonly AmbienceTrackInstance[] TrackInstances = new AmbienceTrackInstance[64];
+	private static BitMask<ulong> globalInstanceMask;
 
 	public override void Load()
 	{
@@ -34,27 +40,61 @@ public sealed class AmbienceSystem : ModSystem
 
 	public override void PostUpdateEverything()
 	{
-		var tracksSpan = CollectionsMarshal.AsSpan(Tracks);
+		var tracksSpan = CollectionsMarshal.AsSpan(TrackTypes);
 		bool isAmbienceEnabled = EnableAmbientSounds;
 
 		for (int i = 0; i < tracksSpan.Length; i++) {
-			ref var track = ref tracksSpan[i];
+			ref var type = ref tracksSpan[i];
+			ref readonly var desc = ref type.Description;
 
-			track.Volume = MathUtils.StepTowards(track.Volume, CalculateTrackTargetVolume(in track), track.VolumeChangeSpeed * TimeSystem.LogicDeltaTime);
+			type.TargetVolume = CalculateTrackTargetVolume(in desc);
+			type.CurrentVolume = MathUtils.StepTowards(type.CurrentVolume, type.TargetVolume, desc.VolumeChangeSpeed * TimeSystem.LogicDeltaTime);
+			bool isActive = type.CurrentVolume > 0f;
 
-			SoundEngine.TryGetActiveSound(track.InstanceReference, out var soundInstance);
+			static uint RollCooldown(ExponentialRange? range)
+				=> range is { } r ? (uint)(r.RandomValue() * TimeSystem.LogicFramerate) : 0;
 
-			if (!isAmbienceEnabled || track.Volume <= 0.0f) {
-				if (soundInstance != null) {
-					soundInstance.Stop();
-
-					track.InstanceReference = SlotId.Invalid;
+			// Create new instances.
+			if (isActive) {
+				while (type.InstanceCount < desc.MaxInstances && globalInstanceMask.TrailingOneCount() is { } freeIndex && freeIndex < globalInstanceMask.Size) {
+					TrackInstances[freeIndex] = new AmbienceTrackInstance {
+						TypeIndex = (ushort)i,
+						PlaybackCooldown = RollCooldown(desc.InstanceCooldown),
+						Position = null,
+					};
+					type.InstanceMask.Set(freeIndex);
+					globalInstanceMask.Set(freeIndex);
 				}
-
-				continue;
 			}
 
-			SoundUtils.UpdateLoopingSound(ref track.InstanceReference, in track.Sound, track.Volume, null);
+			// Update active instances.
+			foreach (int index in type.InstanceMask) {
+				ref var instance = ref TrackInstances[index];
+
+				if (instance.PlaybackCooldown > 0)
+					instance.PlaybackCooldown--;
+
+				SoundEngine.TryGetActiveSound(instance.Slot, out var sound);
+
+				if (isActive && isAmbienceEnabled) {
+					if (sound == null) {
+						if (instance.PlaybackCooldown == 0) {
+							instance.Slot = SoundEngine.PlaySound(in desc.Sound, instance.Position);
+							instance.PlaybackCooldown = RollCooldown(desc.InstanceCooldown);
+						}
+
+						continue;
+					}
+
+					sound.Position = instance.Position;
+					sound.Volume = type.CurrentVolume;
+				} else {
+					sound?.Stop();
+					instance.Slot = SlotId.Invalid;
+					type.InstanceMask.Unset(index);
+					globalInstanceMask.Unset(index);
+				}
+			}
 		}
 	}
 
@@ -63,24 +103,25 @@ public sealed class AmbienceSystem : ModSystem
 	public static void LoadAmbienceTracksFromMod(Mod mod)
 	{
 		var assets = mod.GetFileNames();
+		var jsonSerializer = new JsonSerializer();
+		jsonSerializer.Converters.Add(new AmbienceTrackJsonConverter());
 
-		foreach (string fullFilePath in assets.Where(t => t.EndsWith(".prefab.hjson"))) {
+		const string Extension = ".prefab.hjson";
+
+		foreach (string fullFilePath in assets.Where(t => t.EndsWith(Extension))) {
 			using var stream = mod.GetFileStream(fullFilePath);
 			using var streamReader = new StreamReader(stream);
 
+			string fileName = Path.GetFileName(fullFilePath);
+			string trackName = fileName.Substring(0, fileName.Length - Extension.Length);
 			string hjsonText = streamReader.ReadToEnd();
-			string jsonText = HjsonValue.Parse(hjsonText).ToString(Stringify.Plain);
-			var json = JToken.Parse(jsonText);
+			string jsonText = Hjson.HjsonValue.Parse(hjsonText).ToString();
+			var json = JObject.Parse(jsonText)!;
 
-			foreach (var rootToken in json) {
-				if (rootToken is not JProperty { Name: string entityName, Value: JObject entityJson }
-				|| entityJson["AmbienceTrack"] is not JObject ambienceTrackJson) {
-					continue;
-				}
-
+			if (json["AmbienceTrack"] is JObject ambienceTrackJson) {
 				using (new Logging.QuietExceptionHandle()) {
 					try {
-						RegisterAmbienceTrack(entityName, ambienceTrackJson.ToObject<AmbienceTrack>()!);
+						RegisterAmbienceTrack(trackName, ambienceTrackJson.ToObject<AmbienceTrack>(jsonSerializer)!);
 					}
 					catch (Exception e) {
 						DebugSystem.Log($"Failed to parse '{fullFilePath}':\r\n{e.Message}");
@@ -106,9 +147,8 @@ public sealed class AmbienceSystem : ModSystem
 
 			for (int j = 0; j < inputs.Length; j++) {
 				var inputTag = inputs[j];
-				float input;
 
-				if (!EnvironmentSystem.TryGetSignal(inputTag, out input)) {
+				if (!EnvironmentSystem.TryGetSignal(inputTag, out float input)) {
 					// Navigate back in the first loop to find the correct value
 					for (int ii = i - 1; ii >= 0; ii--) {
 						if (variables[ii].Output == inputTag) {
@@ -144,27 +184,28 @@ public sealed class AmbienceSystem : ModSystem
 		return volume;
 	}
 
-	private static void RegisterAmbienceTrack(string name, AmbienceTrack track)
+	private static void RegisterAmbienceTrack(string name, AmbienceTrack desc)
 	{
-		track.Name = name;
+		VerifyAmbienceTrack(name, in desc);
 
-		VerifyAmbienceTrack(in track);
-
-		if (track.DisableSoundFiltering) {
-			AudioEffectsSystem.SetEnabledForSoundStyle(track.Sound, false);
+		if (desc.DisableSoundFiltering) {
+			AudioEffectsSystem.SetEnabledForSoundStyle(desc.Sound, false);
 		}
 
-		if (track.SoundIsWallOccluded) {
-			WallSoundOcclusion.SetEnabledForSoundStyle(track.Sound, true);
+		if (desc.SoundIsWallOccluded) {
+			WallSoundOcclusion.SetEnabledForSoundStyle(desc.Sound, true);
 		}
 
-		Tracks.Add(track);
+		TrackTypes.Add(new AmbienceTrackType {
+			Name = name,
+			Description = desc,
+		});
 	}
 
-	private static void VerifyAmbienceTrack(in AmbienceTrack track)
+	private static void VerifyAmbienceTrack(string name, in AmbienceTrack track)
 	{
 		if (!track.Variables.Any(v => v.Output == VolumeTag)) {
-			DebugSystem.Log($"Warning - Ambience track {track.Name} does not declare a '{VolumeTag.Name}' variable!");
+			DebugSystem.Log($"Warning - Ambience track {name} does not declare a '{VolumeTag.Name}' variable!");
 		}
 	}
 }

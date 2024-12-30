@@ -1,3 +1,7 @@
+// Copyright (c) 2020-2024 Mirsario & Contributors.
+// Released under the GNU General Public License 3.0.
+// See LICENSE.md for details.
+
 Birds: {
 	AmbienceTrack: {
 		Sound: {
@@ -16,32 +20,6 @@ Birds: {
 			}
 			Volume: {
 				Inputs: [ "NotInExcludedBiomes", "DayTime", "SurfaceAltitude", "NotRainWeather", "TreesAround" ]
-				Operation: Multiply
-			}
-		}
-		
-		SoundIsWallOccluded: true
-	}
-}
-
-Crickets: {
-	AmbienceTrack: {
-		Sound: {
-			SoundPath: "TerrariaOverhaul/Assets/Sounds/Ambience/Forest/ForestCrickets"
-			Type: Ambient
-			Volume: 0.13
-			IsLooped: true
-		}
-
-		// Plays everywhere on surface level near night time when outside evil biomes and if it's not raining.
-		Variables: {
-			NotInExcludedBiomes: {
-				Inputs: [ "Corruption", "Crimson" ]
-				Operation: Max
-				Modifiers: Inverse
-			}
-			Volume: {
-				Inputs: [ "NotInExcludedBiomes", "NightTime", "SurfaceAltitude", "NotRainWeather" ]
 				Operation: Multiply
 			}
 		}

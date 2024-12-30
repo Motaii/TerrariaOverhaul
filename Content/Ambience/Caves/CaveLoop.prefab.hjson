@@ -1,0 +1,20 @@
+// Copyright (c) 2020-2024 Mirsario & Contributors.
+// Released under the GNU General Public License 3.0.
+// See LICENSE.md for details.
+
+AmbienceTrack: {
+	Sound: {
+		SoundPath: "TerrariaOverhaul/Assets/Sounds/Ambience/Underground/CaveLoop"
+		Type: Ambient
+		Volume: 0.2
+		IsLooped: true
+	}
+		
+	// Plays everywhere underground
+	Variables: {
+		Volume: {
+			Inputs: [ "UnderSurfaceAltitude" ]
+			Operation: Multiply
+		}
+	}
+}

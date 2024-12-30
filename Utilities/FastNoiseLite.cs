@@ -1,9 +1,10 @@
-﻿#pragma warning disable IDE0011 // Add braces
+﻿#pragma warning disable // Add braces
 
 namespace TerrariaOverhaul.Utilities;
 
 // Taken from
 // https://github.com/Auburn/FastNoiseLite/blob/master/CSharp/FastNoiseLite.cs?ts=4
+// No meaningful modifications have been done past this line.
 
 // MIT License
 //

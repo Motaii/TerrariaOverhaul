@@ -1,0 +1,20 @@
+// Copyright (c) 2020-2024 Mirsario & Contributors.
+// Released under the GNU General Public License 3.0.
+// See LICENSE.md for details.
+
+AmbienceTrack: {
+	Sound: {
+		SoundPath: "TerrariaOverhaul/Assets/Sounds/Ambience/Evil/EvilDroneLoop"
+		Type: Ambient
+		Volume: 0.6
+		IsLooped: true
+	}
+
+	// Plays everywhere near evil biomes as well as near meteors and in the dungeon.
+	Variables: {
+		Volume: {
+			Inputs: [ "Corruption", "Crimson", "Meteor", "Dungeon" ]
+			Operation: Max
+		}
+	}
+}

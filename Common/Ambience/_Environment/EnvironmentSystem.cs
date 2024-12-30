@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2020-2024 Mirsario & Contributors.
+// Released under the GNU General Public License 3.0.
+// See LICENSE.md for details.
+
+using System;
 using System.Collections.Generic;
 using System.Reflection;
 using Microsoft.Xna.Framework;
@@ -9,6 +13,20 @@ using TerrariaOverhaul.Core.Tags;
 using TerrariaOverhaul.Utilities;
 
 namespace TerrariaOverhaul.Common.Ambience;
+
+[AttributeUsage(AttributeTargets.Method)]
+public sealed class EnvironmentSignalUpdaterAttribute(string? tagNameOverride = null) : Attribute
+{
+	public readonly string? TagNameOverride = tagNameOverride;
+}
+
+public readonly ref struct EnvironmentContext
+{
+	public Player Player { get; init; }
+	public Vector2 PlayerTilePosition { get; init; }
+	public ReadOnlySpan<int> TileCounts { get; init; }
+	public SceneMetrics Metrics { get; init; }
+}
 
 /// <summary>
 /// Utility system for setting and getting dynamic tags of the local player's environment.

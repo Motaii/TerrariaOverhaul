@@ -1,20 +1,22 @@
-Underwater: {
-	AmbienceTrack: {
-		Sound: {
-			SoundPath: "TerrariaOverhaul/Assets/Sounds/Ambience/UnderwaterLoop"
-			Type: Ambient
-			Volume: 0.80
-			IsLooped: true
-		}
+// Copyright (c) 2020-2024 Mirsario & Contributors.
+// Released under the GNU General Public License 3.0.
+// See LICENSE.md for details.
 
-		VolumeChangeSpeed: 2.5
-		DisableSoundFiltering: true
+AmbienceTrack: {
+	Sound: {
+		SoundPath: "TerrariaOverhaul/Assets/Sounds/Ambience/UnderwaterLoop"
+		Type: Ambient
+		Volume: 0.80
+		IsLooped: true
+	}
 
-		Variables: {
-			Volume: {
-				Inputs: [ "Underwater" ]
-				Operation: Multiply
-			}
+	VolumeChangeSpeed: 2.5
+	DisableSoundFiltering: true
+
+	Variables: {
+		Volume: {
+			Inputs: [ "Underwater" ]
+			Operation: Multiply
 		}
 	}
 }

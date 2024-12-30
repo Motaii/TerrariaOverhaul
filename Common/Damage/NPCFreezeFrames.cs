@@ -1,4 +1,8 @@
-﻿// Commented out, as I'm not sure about this feature --Mirsario.
+﻿// Copyright (c) 2020-2024 Mirsario & Contributors.
+// Released under the GNU General Public License 3.0.
+// See LICENSE.md for details.
+
+// Commented out, as I'm not sure about this feature --Mirsario.
 /*using System;
 using Microsoft.Xna.Framework;
 using Terraria;

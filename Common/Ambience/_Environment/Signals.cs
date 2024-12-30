@@ -1,4 +1,8 @@
-﻿using System;
+﻿// Copyright (c) 2020-2024 Mirsario & Contributors.
+// Released under the GNU General Public License 3.0.
+// See LICENSE.md for details.
+
+using System;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -44,7 +48,7 @@ public sealed class CalculatedSignalArrayJsonConverter : JsonConverter
 	public override object? ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
 	{
 		if (reader.TokenType != JsonToken.StartObject) {
-			throw new InvalidOperationException($"Expected a JSON string or object, but got '{reader.TokenType}' instead.");
+			throw new InvalidOperationException($"Expected a JSON object, but got '{reader.TokenType}' instead.");
 		}
 
 		var jObject = JObject.Load(reader);

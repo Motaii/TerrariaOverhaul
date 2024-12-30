@@ -27,12 +27,18 @@ The git command for that would be `git clone https://github.com/Mirsario/Terrari
 That's all. Use `git pull` to pull new commits, and `git reset origin/dev --hard` to force-reset your local repository.
 
 # 📖 License
-All code of this repository is provided under [the MIT License](https://github.com/Mirsario/TerrariaOverhaul/blob/dev/LICENSE.md).
-
+#### Code
+All original code of this repository is provided under the [GNU General Public License 3.0](https://github.com/Mirsario/TerrariaOverhaul/blob/dev/LICENSE.md).<br/>
+Each code file has its own license header, most but not all of them being:
+> ```cs
+> // Copyright (c) 2020-2024 Mirsario & Contributors.
+> // Released under the GNU General Public License 3.0.
+> // See LICENSE.md for details.
+> ```
+Exceptions: `Utilities/FastNoiseLite.cs` (MIT).
+#### Assets
 All of the art, audio, and other non-code assets belong to their respective owners and are used non-commercially either with a permission, a royalty-free license, or with various modifications & trust in the holiness of videogame modding.
-No copyright infringements intended.
-
-Besides for that, I only want to say - be nice, and please [contribute configuration](https://github.com/Mirsario/TerrariaOverhaul/issues/41) instead of splitting the mod's features into other mods. The latter is dickish.
+No copyright infringements and no commercial use are intended.
 
 # ❤️ Contributors
 Thank you to the following contributors for helping improve the mod for everyone!
