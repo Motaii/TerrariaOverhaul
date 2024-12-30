@@ -1,4 +1,8 @@
-﻿using Microsoft.Xna.Framework.Graphics;
+﻿// Copyright (c) 2020-2024 Mirsario & Contributors.
+// Released under the GNU General Public License 3.0.
+// See LICENSE.md for details.
+
+using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using Terraria.GameContent.UI.Elements;
 using Terraria.ID;

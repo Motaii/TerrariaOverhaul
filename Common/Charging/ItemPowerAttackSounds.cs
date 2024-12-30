@@ -1,4 +1,8 @@
-﻿using ReLogic.Utilities;
+﻿// Copyright (c) 2020-2024 Mirsario & Contributors.
+// Released under the GNU General Public License 3.0.
+// See LICENSE.md for details.
+
+using ReLogic.Utilities;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ModLoader;

@@ -1,4 +1,8 @@
-﻿using Terraria.Audio;
+﻿// Copyright (c) 2020-2024 Mirsario & Contributors.
+// Released under the GNU General Public License 3.0.
+// See LICENSE.md for details.
+
+using Terraria.Audio;
 using TerrariaOverhaul.Common.Footsteps;
 using TerrariaOverhaul.Core.PhysicalMaterials;
 

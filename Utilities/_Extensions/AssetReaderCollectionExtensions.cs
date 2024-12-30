@@ -1,4 +1,8 @@
-﻿using System.Collections.Generic;
+﻿// Copyright (c) 2020-2024 Mirsario & Contributors.
+// Released under the GNU General Public License 3.0.
+// See LICENSE.md for details.
+
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using ReLogic.Content;

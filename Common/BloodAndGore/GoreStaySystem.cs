@@ -1,4 +1,8 @@
-﻿using Mono.Cecil.Cil;
+﻿// Copyright (c) 2020-2024 Mirsario & Contributors.
+// Released under the GNU General Public License 3.0.
+// See LICENSE.md for details.
+
+using Mono.Cecil.Cil;
 using MonoMod.Cil;
 using Terraria;
 using Terraria.ID;
