@@ -49,6 +49,7 @@
 - Crimson and Corruption enemies now have new hit and death audio.
 - Leaves particles will now be baked as decals whenever they hit the ground.
 - New ambience tracks: `Beach Waves` (Thanks, **@ZestyMace**!).
+- Introduced many new randomly played ambience sounds (previously we've only had loops).
 ### Difficulty
 - Various changes to compensate all the extra power given to the player by the mod.
 - Enemy health multipliers across all difficulties were increased from `x2.0` to `x2.25`.

@@ -1,0 +1,24 @@
+FallingRocks: {
+	AmbienceTrack: {
+		Sound: {
+			SoundPath: "TerrariaOverhaul/Assets/Sounds/Ambience/Underground/FallingRocks"
+			NumVariants: 2
+			Type: Ambient
+			Volume: 0.4
+			PitchVariance: 0.3
+		}
+		InstanceCooldown: {
+			Min: 5.0
+			Max: 80.0
+			Exponent: 1.5
+		}
+		
+		// Plays everywhere underground
+		Variables: {
+			Volume: {
+				Inputs: [ "UnderSurfaceAltitude" ]
+				Operation: Multiply
+			}
+		}
+	}
+}
