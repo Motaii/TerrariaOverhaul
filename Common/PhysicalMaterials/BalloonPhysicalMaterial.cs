@@ -1,9 +1,8 @@
-﻿using System.Reflection;
-using Microsoft.Xna.Framework;
-using Terraria;
+﻿// Copyright (c) 2020-2024 Mirsario & Contributors.
+// Released under the GNU General Public License 3.0.
+// See LICENSE.md for details.
+
 using Terraria.Audio;
-using Terraria.DataStructures;
-using Terraria.ID;
 using TerrariaOverhaul.Common.Footsteps;
 using TerrariaOverhaul.Common.Tags;
 using TerrariaOverhaul.Core.PhysicalMaterials;
